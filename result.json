@@ -1,0 +1,91 @@
+{
+    "Student Name": "KARTHIKEYAN S",
+    "Reg. No.": "212224230116",
+    "Semester": "EVEN",
+    "Gender": "Male",
+    "Program": "B.Tech. Artificial Intelligence and Data Science",
+    "Credit Registered": "35",
+    "Credit Completed": "35",
+    "Results": [
+        {
+            "Semester": "EVEN",
+            "Course Name": "CS1408-Software Engineering",
+            "Grade point": "8",
+            "Grade": "A",
+            "Credit": "4",
+            "Result status": "Pass"
+        },
+        {
+            "Semester": "EVEN",
+            "Course Name": "CS1406-Computer Networks",
+            "Grade point": "9",
+            "Grade": "A+",
+            "Credit": "4",
+            "Result status": "Pass"
+        },
+        {
+            "Semester": "EVEN",
+            "Course Name": "CS1405-Operating System",
+            "Grade point": "8",
+            "Grade": "A",
+            "Credit": "4",
+            "Result status": "Pass"
+        },
+        {
+            "Semester": "EVEN",
+            "Course Name": "SH2211-Statistics and Numerical Methods",
+            "Grade point": "8",
+            "Grade": "A",
+            "Credit": "",
+            "Result status": "Pass"
+        },
+        {
+            "Semester": "EVEN",
+            "Course Name": "SH4205-Principles of Chemistry in Engineering",
+            "Grade point": "9",
+            "Grade": "A+",
+            "Credit": "4",
+            "Result status": "Pass"
+        },
+        {
+            "Semester": "EVEN",
+            "Course Name": "SH2221-Linear Algebra Laboratory",
+            "Grade point": "9",
+            "Grade": "A+",
+            "Credit": "2",
+            "Result status": "Pass"
+        },
+        {
+            "Semester": "EVEN",
+            "Course Name": "SH2220-Mathematics for Artificial Intelligence",
+            "Grade point": "9",
+            "Grade": "A+",
+            "Credit": "4",
+            "Result status": "Pass"
+        },
+        {
+            "Semester": "EVEN",
+            "Course Name": "CS3414-Fundamentals of Web Application Development",
+            "Grade point": "8",
+            "Grade": "A",
+            "Credit": "5",
+            "Result status": "Pass"
+        },
+        {
+            "Semester": "EVEN",
+            "Course Name": "CS3301-Python Programming",
+            "Grade point": "8",
+            "Grade": "A",
+            "Credit": "3",
+            "Result status": "Pass"
+        },
+        {
+            "Semester": "EVEN",
+            "Course Name": "SH7102-g! Ggryleg / Tamils and Technology",
+            "Grade point": "8",
+            "Grade": "A",
+            "Credit": "1",
+            "Result status": "Pass"
+        }
+    ]
+}
