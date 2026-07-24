@@ -22,7 +22,7 @@ export default function LoginPage() {
   const validateRegNo = (val) => {
     if (!/^\d{12}$/.test(val)) return 'Register number must be exactly 12 digits';
     const deptCode = val.slice(6, 8);
-    if (!['23'].includes(deptCode)) return `Department code "${deptCode}" is not yet supported (AIDS = 23)`;
+    if (!['23', '10'].includes(deptCode)) return `Department code "${deptCode}" is not yet supported (AIDS = 23, CSECS = 10)`;
     return '';
   };
 
@@ -170,8 +170,8 @@ export default function LoginPage() {
                   <span style={{ fontSize: '0.75rem', padding: '2px 8px', background: 'var(--primary-50)', color: 'var(--primary-700)', borderRadius: 99, border: '1px solid var(--primary-100)' }}>
                     📅 Batch {yearJoining}
                   </span>
-                  <span style={{ fontSize: '0.75rem', padding: '2px 8px', background: deptCode === '23' ? 'var(--success-50)' : '#fee2e2', color: deptCode === '23' ? 'var(--success-600)' : '#dc2626', borderRadius: 99, border: `1px solid ${deptCode === '23' ? 'var(--success-500)' : '#fca5a5'}` }}>
-                    🏛 {deptCode === '23' ? 'AI & Data Science' : `Dept ${deptCode} (unsupported)`}
+                  <span style={{ fontSize: '0.75rem', padding: '2px 8px', background: ['23', '10'].includes(deptCode) ? 'var(--success-50)' : '#fee2e2', color: ['23', '10'].includes(deptCode) ? 'var(--success-600)' : '#dc2626', borderRadius: 99, border: `1px solid ${['23', '10'].includes(deptCode) ? 'var(--success-500)' : '#fca5a5'}` }}>
+                    🏛 {deptCode === '23' ? 'AI & Data Science' : deptCode === '10' ? 'CSE Cyber Security' : `Dept ${deptCode} (unsupported)`}
                   </span>
                 </div>
               )}

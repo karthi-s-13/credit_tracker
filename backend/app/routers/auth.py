@@ -9,6 +9,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 # Department code mapping
 DEPT_MAP = {
     "23": "AIDS",
+    "10": "CSECS",
     "01": "CSE",
     "02": "ECE",
     "03": "EEE",
