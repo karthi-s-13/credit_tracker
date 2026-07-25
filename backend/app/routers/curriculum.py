@@ -117,7 +117,8 @@ def get_curriculum(dept_name: str, year: str, db: Session = Depends(get_db)):
     CourseModel = get_dynamic_course_model(table_name)
     
     from ..database import engine
-    if not engine.dialect.has_table(engine.connect(), table_name):
+    from sqlalchemy import inspect
+    if not inspect(engine).has_table(table_name):
         raise HTTPException(status_code=404, detail=f"No curriculum found for department: {dept} and year: {year}")
         
     courses = db.query(CourseModel).order_by(CourseModel.sno, CourseModel.id).all()

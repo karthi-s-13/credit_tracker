@@ -39,10 +39,12 @@ def get_progress(register_number: str, db: Session = Depends(get_db)):
             table_to_course_ids[entry.course_table] = []
         table_to_course_ids[entry.course_table].append(entry.course_id)
         
+    from sqlalchemy import inspect
+    inspector = inspect(engine)
     course_cache = {}
     for table_name, course_ids in table_to_course_ids.items():
         CourseModel = get_dynamic_course_model(table_name)
-        if engine.dialect.has_table(engine.connect(), table_name):
+        if inspector.has_table(table_name):
             courses = db.query(CourseModel).filter(CourseModel.id.in_(course_ids)).all()
             for c in courses:
                 course_cache[(table_name, c.id)] = CourseOut.model_validate(c)

@@ -126,8 +126,9 @@ def process_pdf(pdf_bytes: bytes, db: Session, table_name: str):
     Returns dict with `matches` and `unmatched` lists.
     """
     from .schemas import OcrMatch, OcrResult
+    from sqlalchemy import inspect
 
-    if not engine.dialect.has_table(engine.connect(), table_name):
+    if not inspect(engine).has_table(table_name):
         return OcrResult(matches=[], unmatched=["Curriculum table not found for this student."])
 
     CourseModel = get_dynamic_course_model(table_name)

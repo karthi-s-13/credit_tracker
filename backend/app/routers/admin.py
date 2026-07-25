@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, inspect
 from typing import List
 import json
 
@@ -28,11 +28,12 @@ def get_all_students(db: Session = Depends(get_db)):
         table_to_course_ids[p.course_table].add(p.course_id)
         
     # Fetch course details dynamically per table
+    inspector = inspect(engine)
     course_credits = {}  # (table, course_id) -> total_credits
     for table_name, course_ids in table_to_course_ids.items():
         CourseModel = get_dynamic_course_model(table_name)
         # Ensure table exists before querying
-        if engine.dialect.has_table(engine.connect(), table_name):
+        if inspector.has_table(table_name):
             courses = db.query(CourseModel.id, CourseModel.total_credits).filter(CourseModel.id.in_(course_ids)).all()
             for cid, credits in courses:
                 course_credits[(table_name, cid)] = credits or 0

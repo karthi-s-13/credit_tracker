@@ -6,8 +6,11 @@ import time
 # Ensure backend app is in python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "backend")))
 
+# pyrefly: ignore [missing-import]
 from app.database import engine, SessionLocal, Base
+# pyrefly: ignore [missing-import]
 from app.models import Student, StudentProgress, get_dynamic_course_model
+# pyrefly: ignore [missing-import]
 from app.routers.auth import DEPT_MAP, parse_register_number
 from sqlalchemy import inspect, text
 

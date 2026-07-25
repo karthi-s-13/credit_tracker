@@ -59,6 +59,8 @@ def _get_table_name(student: Student) -> str:
     year = student.year_of_joining or "2024"
     return f"{dept}_course_{year}"
 
+from sqlalchemy import inspect
+
 def sync_student_courses(student: Student, db: Session):
     courses_data = get_student_courses_from_json(student.register_number)
     if not courses_data:
@@ -66,7 +68,7 @@ def sync_student_courses(student: Student, db: Session):
 
     table_name = _get_table_name(student)
     
-    if not engine.dialect.has_table(engine.connect(), table_name):
+    if not inspect(engine).has_table(table_name):
         return  # Table doesn't exist, can't sync
         
     CourseModel = get_dynamic_course_model(table_name)
