@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Search, ChevronUp, ChevronDown, CheckCircle2, Clock } from 'lucide-react';
+import { Search, ChevronUp, ChevronDown, CheckCircle2, BookOpen, Clock } from 'lucide-react';
 
 const CATEGORY_LABELS = {
   HS: 'Humanities & Science', BS: 'Basic Science', ES: 'Engineering Science',
@@ -7,7 +7,7 @@ const CATEGORY_LABELS = {
   EEC: 'Employability Enhancement', MC: 'Mandatory Courses',
 };
 
-export default function CourseTable({ courses, completedIds, onToggle }) {
+export default function CourseTable({ courses, completedIds, statusMap = {}, onStatusChange, onToggle }) {
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('ALL');
   const [filterStatus, setFilterStatus] = useState('ALL');
@@ -21,14 +21,13 @@ export default function CourseTable({ courses, completedIds, onToggle }) {
 
   const filtered = useMemo(() => {
     let data = courses.filter(c => {
-      const isCompleted = completedIds.has(c.id);
+      const currentSt = statusMap[c.id] || (completedIds.has(c.id) ? 'completed' : 'pending');
       const matchSearch = !search ||
         c.course_title?.toLowerCase().includes(search.toLowerCase()) ||
         c.course_code_r2024?.toLowerCase().includes(search.toLowerCase());
       const matchCat = filterCat === 'ALL' || c.category === filterCat;
       const matchStatus =
-        filterStatus === 'ALL' ? true :
-        filterStatus === 'completed' ? isCompleted : !isCompleted;
+        filterStatus === 'ALL' ? true : currentSt === filterStatus;
       return matchSearch && matchCat && matchStatus;
     });
 
@@ -45,7 +44,7 @@ export default function CourseTable({ courses, completedIds, onToggle }) {
       return 0;
     });
     return data;
-  }, [courses, search, filterCat, filterStatus, sortKey, sortDir, completedIds]);
+  }, [courses, search, filterCat, filterStatus, sortKey, sortDir, completedIds, statusMap]);
 
   const toggleSort = (key) => {
     if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
@@ -105,6 +104,7 @@ export default function CourseTable({ courses, completedIds, onToggle }) {
         >
           <option value="ALL">All Status</option>
           <option value="completed">Completed</option>
+          <option value="enrolled">Enrolled</option>
           <option value="pending">Pending</option>
         </select>
 
@@ -146,7 +146,9 @@ export default function CourseTable({ courses, completedIds, onToggle }) {
                 </td>
               </tr>
             ) : filtered.map(course => {
-              const isCompleted = completedIds.has(course.id);
+              const currentSt = statusMap[course.id] || (completedIds.has(course.id) ? 'completed' : 'pending');
+              const isCompleted = currentSt === 'completed';
+
               return (
                 <tr key={course.id}>
                   <td style={{ color: 'var(--neutral-400)', fontSize: '0.8rem' }}>{course.sno}</td>
@@ -181,20 +183,43 @@ export default function CourseTable({ courses, completedIds, onToggle }) {
                     </span>
                   </td>
                   <td style={{ textAlign: 'center' }}>
-                    {isCompleted
-                      ? <span className="badge badge-completed"><CheckCircle2 size={11} /> Done</span>
-                      : <span className="badge badge-pending"><Clock size={11} /> Pending</span>
-                    }
+                    {currentSt === 'completed' ? (
+                      <span className="badge badge-completed"><CheckCircle2 size={11} /> Completed</span>
+                    ) : currentSt === 'enrolled' ? (
+                      <span className="badge badge-enrolled"><BookOpen size={11} /> Enrolled</span>
+                    ) : (
+                      <span className="badge badge-pending"><Clock size={11} /> Pending</span>
+                    )}
                   </td>
                   <td style={{ textAlign: 'center' }}>
-                    <button
-                      id={`toggle-course-${course.id}`}
-                      className={`btn btn-sm ${isCompleted ? 'btn-outline' : 'btn-success'}`}
-                      onClick={() => onToggle(course, !isCompleted)}
-                      style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem' }}
-                    >
-                      {isCompleted ? 'Undo' : '✓ Mark Done'}
-                    </button>
+                    {onStatusChange ? (
+                      <select
+                        id={`status-select-${course.id}`}
+                        value={currentSt}
+                        onChange={(e) => onStatusChange(course, e.target.value)}
+                        style={{
+                          fontSize: '0.75rem',
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: 'var(--radius-md)',
+                          border: '1px solid var(--neutral-300)',
+                          background: '#fff',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <option value="completed">Completed</option>
+                        <option value="enrolled">Enrolled</option>
+                        <option value="pending">Pending</option>
+                      </select>
+                    ) : (
+                      <button
+                        id={`toggle-course-${course.id}`}
+                        className={`btn btn-sm ${isCompleted ? 'btn-outline' : 'btn-success'}`}
+                        onClick={() => onToggle && onToggle(course, !isCompleted)}
+                        style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem' }}
+                      >
+                        {isCompleted ? 'Undo' : '✓ Mark Done'}
+                      </button>
+                    )}
                   </td>
                 </tr>
               );

@@ -20,7 +20,7 @@ export default function UploadModal({ student, onClose, onSaved }) {
     try {
       const form = new FormData();
       form.append('file', file);
-      form.append('department', student.dept_name || 'AIDS');
+      form.append('register_number', student.register_number);
       const { data } = await api.post('/ocr/upload', form, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });

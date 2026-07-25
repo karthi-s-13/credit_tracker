@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Student
 from ..schemas import LoginRequest, LoginResponse, StudentOut
+from ..sync_service import sync_student_courses
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -66,6 +67,12 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
         student.name = payload.name
         db.commit()
         db.refresh(student)
+
+    # Sync student courses with JSON on every login
+    try:
+        sync_student_courses(student, db)
+    except Exception as e:
+        print(f"Error syncing student courses: {e}")
 
     return LoginResponse(
         student=StudentOut.model_validate(student),

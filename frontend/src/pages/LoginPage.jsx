@@ -11,6 +11,22 @@ const FEATURES = [
   { icon: Shield, title: 'OCR Upload', desc: 'Auto-extract results from PDF marksheets' },
 ];
 
+const SUPPORTED_DEPTS = {
+  '02': 'BME',
+  '03': 'CIVIL',
+  '04': 'CSE',
+  '05': 'EEE',
+  '06': 'ECE',
+  '08': 'MECH',
+  '10': 'CSECS',
+  '11': 'CSEIOT',
+  '21': 'CHEM',
+  '22': 'IT',
+  '23': 'AIDS',
+  '24': 'AIML',
+  '25': 'AGRI',
+};
+
 export default function LoginPage() {
   const [regNo, setRegNo] = useState('');
   const [name, setName] = useState('');
@@ -22,7 +38,7 @@ export default function LoginPage() {
   const validateRegNo = (val) => {
     if (!/^\d{12}$/.test(val)) return 'Register number must be exactly 12 digits';
     const deptCode = val.slice(6, 8);
-    if (!['23', '10'].includes(deptCode)) return `Department code "${deptCode}" is not yet supported (AIDS = 23, CSECS = 10)`;
+    if (!SUPPORTED_DEPTS[deptCode]) return `Department code "${deptCode}" is not supported`;
     return '';
   };
 
@@ -96,9 +112,29 @@ export default function LoginPage() {
           <h1 style={{ color: '#fff', fontSize: '2.2rem', fontWeight: 800, lineHeight: 1.2, marginBottom: '1rem' }}>
             Track Your Academic<br />Journey Effortlessly
           </h1>
-          <p style={{ color: 'rgb(255 255 255 / 0.7)', fontSize: '1rem', lineHeight: 1.7, marginBottom: '2.5rem' }}>
+          <p style={{ color: 'rgb(255 255 255 / 0.7)', fontSize: '1rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
             Monitor curriculum completion, upload result PDFs, and stay on top of your credit requirements — all in one place.
           </p>
+
+          {/* Last Updated Notice */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: 12,
+            padding: '1rem 1.25rem',
+            marginBottom: '2rem',
+            color: '#fff',
+            fontSize: '0.85rem',
+            lineHeight: '1.5',
+            backdropFilter: 'blur(4px)',
+          }}>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              📅 Record Notice (Last Updated: 8.5.26)
+            </div>
+            <div style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+              Current course completion records were last updated on <strong>8.5.26</strong>. After results are published, you can upload your result PDF to automatically update the tracker.
+            </div>
+          </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {FEATURES.map(({ icon: Icon, title, desc }) => (
@@ -155,7 +191,7 @@ export default function LoginPage() {
                 id="reg-number"
                 className={`input-field ${error ? 'error' : ''}`}
                 type="text"
-                placeholder="e.g. 212224230116"
+                placeholder="e.g. 212224100042"
                 value={regNo}
                 onChange={e => { setRegNo(e.target.value.replace(/\D/g, '')); setError(''); }}
                 maxLength={12}
@@ -170,8 +206,8 @@ export default function LoginPage() {
                   <span style={{ fontSize: '0.75rem', padding: '2px 8px', background: 'var(--primary-50)', color: 'var(--primary-700)', borderRadius: 99, border: '1px solid var(--primary-100)' }}>
                     📅 Batch {yearJoining}
                   </span>
-                  <span style={{ fontSize: '0.75rem', padding: '2px 8px', background: ['23', '10'].includes(deptCode) ? 'var(--success-50)' : '#fee2e2', color: ['23', '10'].includes(deptCode) ? 'var(--success-600)' : '#dc2626', borderRadius: 99, border: `1px solid ${['23', '10'].includes(deptCode) ? 'var(--success-500)' : '#fca5a5'}` }}>
-                    🏛 {deptCode === '23' ? 'AI & Data Science' : deptCode === '10' ? 'CSE Cyber Security' : `Dept ${deptCode} (unsupported)`}
+                  <span style={{ fontSize: '0.75rem', padding: '2px 8px', background: SUPPORTED_DEPTS[deptCode] ? 'var(--success-50)' : '#fee2e2', color: SUPPORTED_DEPTS[deptCode] ? 'var(--success-600)' : '#dc2626', borderRadius: 99, border: `1px solid ${SUPPORTED_DEPTS[deptCode] ? 'var(--success-500)' : '#fca5a5'}` }}>
+                    🏛 {SUPPORTED_DEPTS[deptCode] ? SUPPORTED_DEPTS[deptCode] : `Dept ${deptCode} (unsupported)`}
                   </span>
                 </div>
               )}
@@ -185,7 +221,7 @@ export default function LoginPage() {
                 id="student-name"
                 className="input-field"
                 type="text"
-                placeholder="e.g. Karthikeyan S"
+                placeholder="e.g. Praisy Nishitha J"
                 value={name}
                 onChange={e => setName(e.target.value)}
               />
@@ -218,7 +254,7 @@ export default function LoginPage() {
           </form>
 
           <p style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.8rem', color: 'var(--neutral-400)' }}>
-            BATCH 2024–2028 · R2024 Regulation · AIDS Department
+            BATCH 2024–2028 · R2024 Regulation
           </p>
         </div>
       </div>

@@ -210,6 +210,7 @@ p { color: var(--neutral-600); }
   font-weight: 600;
 }
 .badge-completed { background: var(--success-50); color: var(--success-600); }
+.badge-enrolled { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
 .badge-pending { background: var(--warning-50); color: var(--warning-500); }
 .badge-category {
   background: var(--primary-50);

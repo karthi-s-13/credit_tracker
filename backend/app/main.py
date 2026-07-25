@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine
 from .models import Base
-from .routers import auth, curriculum, progress, ocr
+from .routers import auth, curriculum, progress, ocr, admin
 
 # Create all tables
 Base.metadata.create_all(bind=engine)
@@ -26,6 +26,7 @@ app.include_router(auth.router)
 app.include_router(curriculum.router)
 app.include_router(progress.router)
 app.include_router(ocr.router)
+app.include_router(admin.router)
 
 
 @app.get("/")

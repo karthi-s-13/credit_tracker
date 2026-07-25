@@ -54,6 +54,7 @@ class StudentOut(BaseModel):
 
 class ProgressStatusEnum(str, Enum):
     completed = "completed"
+    enrolled = "enrolled"
     pending = "pending"
 
 
@@ -78,6 +79,7 @@ class ProgressBulkCreate(BaseModel):
 
 class ProgressOut(BaseModel):
     id: int
+    course_table: str
     course_id: int
     status: str
     source: str
@@ -119,3 +121,12 @@ class LoginRequest(BaseModel):
 class LoginResponse(BaseModel):
     student: StudentOut
     message: str
+
+
+# ─── Admin ───────────────────────────────────────────────────────────────────
+
+class StudentAdminOut(StudentOut):
+    total_completed_credits: int = 0
+    
+    class Config:
+        from_attributes = True

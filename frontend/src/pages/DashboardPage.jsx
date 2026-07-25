@@ -12,6 +12,7 @@ export default function DashboardPage() {
   const [curriculum, setCurriculum] = useState([]);
   const [meta, setMeta] = useState(null);
   const [completedIds, setCompletedIds] = useState(new Set());
+  const [statusMap, setStatusMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const toast = useToast();
@@ -23,22 +24,40 @@ export default function DashboardPage() {
       const parsedStudent = JSON.parse(stored);
       setStudent(parsedStudent);
 
+      // Fetch fresh student profile from MySQL DB
+      let currentStudent = parsedStudent;
+      try {
+        const studentRes = await api.get(`/auth/student/${parsedStudent.register_number}`);
+        if (studentRes.data) {
+          currentStudent = studentRes.data;
+          setStudent(currentStudent);
+          localStorage.setItem('student', JSON.stringify(currentStudent));
+        }
+      } catch (e) {
+        console.warn('Using stored student info', e);
+      }
+
       // Load curriculum & meta
-      const dept = parsedStudent.dept_name || 'AIDS';
+      const dept = currentStudent.dept_name || 'AIDS';
+      const year = currentStudent.year_of_joining || '2024';
       const [currRes, metaRes, progRes] = await Promise.all([
-        api.get(`/curriculum/${dept}`),
-        api.get(`/curriculum/${dept}/meta?is_lateral_entry=${parsedStudent.is_lateral_entry}`),
-        api.get(`/progress/${parsedStudent.register_number}`),
+        api.get(`/curriculum/${dept}/${year}`),
+        api.get(`/curriculum/${dept}/meta?is_lateral_entry=${currentStudent.is_lateral_entry || 0}`),
+        api.get(`/progress/${currentStudent.register_number}`),
       ]);
 
       setCurriculum(currRes.data);
       setMeta(metaRes.data);
       
-      const ids = new Set(
-        progRes.data
-          .filter(p => p.status === 'completed')
-          .map(p => p.course_id)
-      );
+      const sMap = {};
+      const ids = new Set();
+      progRes.data.forEach(p => {
+        sMap[p.course_id] = p.status;
+        if (p.status === 'completed') {
+          ids.add(p.course_id);
+        }
+      });
+      setStatusMap(sMap);
       setCompletedIds(ids);
     } catch (err) {
       toast('Failed to load dashboard data', 'error');
@@ -51,22 +70,31 @@ export default function DashboardPage() {
     loadData();
   }, [loadData]);
 
-  const handleToggle = async (course, willComplete) => {
+  const handleStatusChange = async (course, newStatus) => {
     try {
       await api.post('/progress/toggle', {
         register_number: student.register_number,
         course_id: course.id,
-        status: willComplete ? 'completed' : 'pending',
+        status: newStatus,
         source: 'manual',
       });
       
+      setStatusMap(prev => ({
+        ...prev,
+        [course.id]: newStatus,
+      }));
+
       setCompletedIds(prev => {
         const next = new Set(prev);
-        willComplete ? next.add(course.id) : next.delete(course.id);
+        if (newStatus === 'completed') {
+          next.add(course.id);
+        } else {
+          next.delete(course.id);
+        }
         return next;
       });
       
-      toast(`${course.course_code_r2024 || 'Course'} marked as ${willComplete ? 'completed' : 'pending'}`, 'success');
+      toast(`${course.course_code_r2024 || 'Course'} status updated to ${newStatus}`, 'success');
     } catch (err) {
       toast('Failed to update course status', 'error');
     }
@@ -177,7 +205,8 @@ export default function DashboardPage() {
         <CourseTable
           courses={curriculum}
           completedIds={completedIds}
-          onToggle={handleToggle}
+          statusMap={statusMap}
+          onStatusChange={handleStatusChange}
         />
       </main>
 

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import AdminDashboard from './pages/AdminDashboard';
 import ToastProvider from './components/ToastProvider';
 
 function PrivateRoute({ children }) {
@@ -22,6 +23,7 @@ export default function App() {
               </PrivateRoute>
             }
           />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ToastProvider>

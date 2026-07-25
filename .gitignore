@@ -6,6 +6,7 @@ __pycache__/
 *.pyc
 .env
 *.db
+backend/*.db
 .pytest_cache/
 
 # Node / Frontend
@@ -14,11 +15,20 @@ frontend/dist/
 frontend/.env
 frontend/.eslintcache
 
-# OS
+# User / Personal Data Directories
+dataset/karthi/
+dataset/praisy/
+karthi/
+praisy/
+
+# OS & IDEs
 .DS_Store
 Thumbs.db
-
-# IDEs
 .vscode/
 .idea/
 *.swp
+
+# Temp files
+page_0.png
+*.tmp
+result.json

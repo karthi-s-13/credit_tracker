@@ -8,11 +8,14 @@ from typing import List, Tuple, Optional
 import fitz  # pymupdf
 import numpy as np
 from PIL import Image
+# pyrefly: ignore [missing-import]
 from paddleocr import PaddleOCR
+# pyrefly: ignore [missing-import]
 from rapidfuzz import fuzz, process
 from sqlalchemy.orm import Session
 
-from .models import Course
+from .models import get_dynamic_course_model
+from .database import engine
 
 # Singleton OCR instance (heavy to initialise)
 _ocr_instance: Optional[PaddleOCR] = None
@@ -117,15 +120,20 @@ def fuzzy_match_course(text: str, choices: List[Tuple[int, str, str]]) -> Option
     return None
 
 
-def process_pdf(pdf_bytes: bytes, db: Session, department: str = "AIDS"):
+def process_pdf(pdf_bytes: bytes, db: Session, table_name: str):
     """
     Full pipeline: PDF → images → OCR → parse → match.
     Returns dict with `matches` and `unmatched` lists.
     """
     from .schemas import OcrMatch, OcrResult
 
-    # Load all courses for the department
-    courses = db.query(Course).filter(Course.department == department).all()
+    if not engine.dialect.has_table(engine.connect(), table_name):
+        return OcrResult(matches=[], unmatched=["Curriculum table not found for this student."])
+
+    CourseModel = get_dynamic_course_model(table_name)
+
+    # Load all courses for the dynamic table
+    courses = db.query(CourseModel).all()
     choices = [(c.id, c.course_code_r2024 or "", c.course_title) for c in courses]
     course_map = {c.id: c for c in courses}
 
